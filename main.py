@@ -10,15 +10,15 @@ from models import Item, ItemCreate, ItemRead
 
 logger = logging.getLogger("uvicorn")
 
+app = FastAPI()
+
 @app.on_event("startup")
 async def on_startup():
     create_db_and_tables()
 
-async def get_session() -> AsyncGenerator[AsyncSession, None]:
+async def get_session() -> AsyncSession:
     async with async_session_maker() as session:
         yield session
-
-app = FastAPI()
 
 @app.get("/items/", response_model=List[ItemRead])
 async def get_items(session: AsyncSession = Depends(get_session)):

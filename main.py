@@ -25,3 +25,24 @@ def get_item(item_id: int):
         if item.id == item_id:
             return item
     raise HTTPException(status_code=404, detail="Item not found")
+
+@app.post("/items/")
+def create_item(item: Item):
+    items_db.append(item)
+    return {"message": f"Item {item.name} added", "item": item}
+
+@app.put("/items/{item_id}")
+def update_item(item_id: int, item: Item):
+    for i, stored_item in enumerate(items_db):
+        if stored_item.id == item_id:
+            items_db[i] = item
+            return {"message": "Item updated", "item": item}
+    raise HTTPException(status_code=404, detail="Item not found")
+
+@app.delete("/items/{item_id}")
+def delete_item(item_id: int):
+    for i, item in enumerate(items_db):
+        if item.id == item_id:
+            deleted_item = items_db.pop(i)
+            return {"message": "Item deleted", "item": deleted_item}
+    raise HTTPException(status_code=404, detail="Item not found")
